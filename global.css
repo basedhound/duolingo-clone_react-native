@@ -3,3 +3,111 @@
 @import "tailwindcss/utilities.css";
 
 @import "nativewind/theme";
+
+/* ============================================================
+   LINGUA DESIGN SYSTEM — THEME TOKENS
+   ============================================================ */
+
+@theme {
+  /* ---- Primary Colors ---- */
+  --color-lingua-purple: #6C4EF5;
+  --color-lingua-deep-purple: #5B3BF6;
+  --color-lingua-blue: #4D8BFF;
+  --color-lingua-green: #21C16B;
+
+  /* ---- Semantic Colors ---- */
+  --color-success: #21C16B;
+  --color-warning: #FFC800;
+  --color-streak: #FF8A00;
+  --color-error: #FF4D4F;
+  --color-info: #4D8BFF;
+
+  /* ---- Neutral Colors ---- */
+  --color-text-primary: #0D132B;
+  --color-text-secondary: #6B7280;
+  --color-border: #E5E7EB;
+  --color-surface: #F6F7FB;
+  --color-background: #FFFFFF;
+
+  /* ---- Font Families ---- */
+  --font-poppins: 'Poppins-Regular', system-ui, sans-serif;
+  --font-poppins-medium: 'Poppins-Medium', system-ui, sans-serif;
+  --font-poppins-semibold: 'Poppins-SemiBold', system-ui, sans-serif;
+  --font-poppins-bold: 'Poppins-Bold', system-ui, sans-serif;
+}
+
+/* ============================================================
+   TYPOGRAPHY UTILITIES — BEM: heading--{level}, body--{size}
+   ============================================================ */
+
+/* H1 — Page / Screen Title — 32px Bold 1.2 */
+@utility heading--h1 {
+  font-family: 'Poppins-Bold';
+  font-size: 32px;
+  line-height: 38px;
+  font-weight: 700;
+  color: #0D132B;
+}
+
+/* H2 — Section Title — 24px SemiBold 1.3 */
+@utility heading--h2 {
+  font-family: 'Poppins-SemiBold';
+  font-size: 24px;
+  line-height: 31px;
+  font-weight: 600;
+  color: #0D132B;
+}
+
+/* H3 — Card / Module Title — 20px SemiBold 1.3 */
+@utility heading--h3 {
+  font-family: 'Poppins-SemiBold';
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 600;
+  color: #0D132B;
+}
+
+/* H4 — Subheading — 16px Medium 1.4 */
+@utility heading--h4 {
+  font-family: 'Poppins-Medium';
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+  color: #0D132B;
+}
+
+/* Body Large — Important content — 16px Regular 1.6 */
+@utility body--lg {
+  font-family: 'Poppins-Regular';
+  font-size: 16px;
+  line-height: 26px;
+  font-weight: 400;
+  color: #0D132B;
+}
+
+/* Body Medium — Body text — 14px Regular 1.6 */
+@utility body--md {
+  font-family: 'Poppins-Regular';
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: #0D132B;
+}
+
+/* Body Small — Supporting text — 13px Regular 1.6 */
+@utility body--sm {
+  font-family: 'Poppins-Regular';
+  font-size: 13px;
+  line-height: 21px;
+  font-weight: 400;
+  color: #6B7280;
+}
+
+/* Caption — Labels, meta text — 11px Regular 1.4 */
+@utility body--caption {
+  font-family: 'Poppins-Regular';
+  font-size: 11px;
+  line-height: 15px;
+  font-weight: 400;
+  color: #6B7280;
+}
