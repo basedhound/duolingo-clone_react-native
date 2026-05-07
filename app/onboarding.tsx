@@ -55,7 +55,7 @@ export default function OnboardingScreen() {
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.85}
-          onPress={() => router.replace('/')}
+          onPress={() => router.push('/(auth)/sign-up')}
         >
           <Text className="font-poppins-semibold text-[17px] text-white">Get Started</Text>
           <Ionicons name="chevron-forward" size={20} color="#FFFFFF" style={{ marginLeft: 6 }} />
