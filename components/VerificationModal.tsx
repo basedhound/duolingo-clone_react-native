@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -9,16 +10,27 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   visible: boolean;
   email: string;
   onClose: () => void;
+  onVerify: (code: string) => Promise<void>;
+  onResend: () => Promise<void>;
+  error?: string;
+  loading?: boolean;
 }
 
-export default function VerificationModal({ visible, email, onClose }: Props) {
+export default function VerificationModal({
+  visible,
+  email,
+  onClose,
+  onVerify,
+  onResend,
+  error,
+  loading,
+}: Props) {
   const [code, setCode] = useState('');
   const inputRef = useRef<TextInput>(null);
 
@@ -34,7 +46,7 @@ export default function VerificationModal({ visible, email, onClose }: Props) {
     const digits = text.replace(/\D/g, '').slice(0, 6);
     setCode(digits);
     if (digits.length === 6) {
-      setTimeout(() => router.replace('/'), 300);
+      onVerify(digits);
     }
   };
 
@@ -71,7 +83,7 @@ export default function VerificationModal({ visible, email, onClose }: Props) {
               <Text className="font-poppins-bold text-[22px] text-text-primary text-center mt-3">
                 Check your email
               </Text>
-              <Text className="font-poppins text-[14px] text-text-secondary text-center mt-2 px-8 leading-[22px]">
+              <Text className="font-poppins text-[14px] text-text-secondary text-center mt-2 px-8 leading-5.5">
                 {'We sent a 6-digit code to\n'}
                 <Text className="font-poppins-semibold text-text-primary">{email || 'your email'}</Text>
               </Text>
@@ -103,13 +115,31 @@ export default function VerificationModal({ visible, email, onClose }: Props) {
                   keyboardType="number-pad"
                   maxLength={6}
                   style={styles.hiddenInput}
+                  editable={!loading}
                 />
               </TouchableOpacity>
 
+              {/* Error */}
+              {error ? (
+                <Text className="font-poppins text-[13px] text-red-500 text-center mt-3 px-8">
+                  {error}
+                </Text>
+              ) : null}
+
+              {/* Loading */}
+              {loading ? (
+                <ActivityIndicator color="#6C4EF5" style={{ marginTop: 16 }} />
+              ) : null}
+
               {/* Resend */}
               <Text className="font-poppins text-[13px] text-text-secondary text-center mt-5 mb-10">
-                Didn't receive it?{' '}
-                <Text className="font-poppins-semibold text-lingua-purple">Resend code</Text>
+                {"Didn't receive it?"}{' '}
+                <Text
+                  className="font-poppins-semibold text-lingua-purple"
+                  onPress={onResend}
+                >
+                  Resend code
+                </Text>
               </Text>
             </View>
           </KeyboardAvoidingView>

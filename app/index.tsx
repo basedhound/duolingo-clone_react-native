@@ -1,8 +1,26 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useAuth, useClerk } from '@clerk/expo';
+import { Redirect } from 'expo-router';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 
 export default function HomeScreen() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const { signOut } = useClerk();
+
+  if (!isLoaded) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" color="#6C4EF5" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/onboarding" />;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View className="flex-1 items-center justify-center px-6 gap-4">
@@ -13,9 +31,9 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.85}
-          onPress={() => router.push('/onboarding')}
+          onPress={() => signOut()}
         >
-          <Text className="font-poppins-semibold text-[16px] text-white">View Onboarding</Text>
+          <Text className="font-poppins-semibold text-[16px] text-white">Sign Out</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -26,6 +44,11 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   button: {
     backgroundColor: '#6C4EF5',

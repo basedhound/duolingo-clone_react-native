@@ -1,3 +1,5 @@
+import { useSignUp, useSSO } from '@clerk/expo';
+import { type Href, router } from 'expo-router';
 import { useState } from 'react';
 import {
   Image,
@@ -11,21 +13,80 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { images } from '@/constants/images';
 import VerificationModal from '@/components/VerificationModal';
 
 export default function SignUpScreen() {
+  const { signUp, fetchStatus } = useSignUp();
+  const { startSSOFlow } = useSSO();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [verifyError, setVerifyError] = useState('');
 
-  const handleSignUp = () => {
-    if (!email) return;
+  const isLoading = fetchStatus === 'fetching';
+
+  const handleSignUp = async () => {
+    if (!email || !password) return;
+    setFormError('');
+
+    const { error: createError } = await signUp.password({
+      emailAddress: email,
+      password,
+    });
+    if (createError) {
+      setFormError(createError.message ?? 'Something went wrong');
+      return;
+    }
+
+    const { error: sendError } = await signUp.verifications.sendEmailCode();
+    if (sendError) {
+      setFormError(sendError.message ?? 'Failed to send verification code');
+      return;
+    }
+
     setModalVisible(true);
+  };
+
+  const handleVerify = async (code: string) => {
+    setVerifyError('');
+
+    const { error } = await signUp.verifications.verifyEmailCode({ code });
+    if (error) {
+      setVerifyError(error.message ?? 'Invalid code. Try again.');
+      return;
+    }
+
+    if (signUp.status === 'complete') {
+      await signUp.finalize({
+        navigate: ({ session, decorateUrl }) => {
+          if (session?.currentTask) return;
+          const url = decorateUrl('/');
+          router.replace(url as Href);
+        },
+      });
+    }
+  };
+
+  const handleResend = async () => {
+    await signUp.verifications.sendEmailCode();
+  };
+
+  const handleSSO = async (strategy: 'oauth_google' | 'oauth_apple' | 'oauth_facebook') => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy });
+      if (createdSessionId && setActive) {
+        await setActive({ session: createdSessionId });
+        router.replace('/');
+      }
+    } catch {
+      setFormError('Sign-in failed. Please try again.');
+    }
   };
 
   return (
@@ -46,7 +107,7 @@ export default function SignUpScreen() {
 
           {/* Heading */}
           <View className="px-6 mt-2">
-            <Text className="font-poppins-bold text-[30px] text-text-primary leading-[38px]">
+            <Text className="font-poppins-bold text-[30px] text-text-primary leading-9.5">
               Create your account
             </Text>
             <Text className="font-poppins text-[15px] text-text-secondary mt-1">
@@ -112,14 +173,20 @@ export default function SignUpScreen() {
 
             {/* Sign Up button */}
             <TouchableOpacity
-              style={styles.primaryBtn}
+              style={[styles.primaryBtn, isLoading && styles.primaryBtnDisabled]}
               activeOpacity={0.85}
               onPress={handleSignUp}
+              disabled={isLoading}
             >
               <Text className="font-poppins-semibold text-[17px] text-white">
-                Sign Up
+                {isLoading ? 'Signing up…' : 'Sign Up'}
               </Text>
             </TouchableOpacity>
+
+            {/* Form error */}
+            {formError ? (
+              <Text style={styles.errorText}>{formError}</Text>
+            ) : null}
 
             {/* Divider */}
             <View style={styles.dividerRow}>
@@ -134,6 +201,7 @@ export default function SignUpScreen() {
             <SocialButton
               icon={<Ionicons name="logo-google" size={22} color="#4285F4" />}
               label="Continue with Google"
+              onPress={() => handleSSO('oauth_google')}
             />
             <SocialButton
               icon={
@@ -142,10 +210,12 @@ export default function SignUpScreen() {
                 </View>
               }
               label="Continue with Facebook"
+              onPress={() => handleSSO('oauth_facebook')}
             />
             <SocialButton
               icon={<Ionicons name="logo-apple" size={24} color="#000000" />}
               label="Continue with Apple"
+              onPress={() => handleSSO('oauth_apple')}
             />
           </View>
 
@@ -167,14 +237,25 @@ export default function SignUpScreen() {
         visible={modalVisible}
         email={email}
         onClose={() => setModalVisible(false)}
+        onVerify={handleVerify}
+        onResend={handleResend}
+        error={verifyError}
       />
     </SafeAreaView>
   );
 }
 
-function SocialButton({ icon, label }: { icon: React.ReactNode; label: string }) {
+function SocialButton({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onPress: () => void;
+}) {
   return (
-    <TouchableOpacity style={styles.socialBtn} activeOpacity={0.8}>
+    <TouchableOpacity style={styles.socialBtn} activeOpacity={0.8} onPress={onPress}>
       <View style={styles.socialIconSlot}>{icon}</View>
       <Text className="font-poppins-medium text-[15px] text-text-primary flex-1 text-center">
         {label}
@@ -231,7 +312,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#FFC800',
   },
-  // Inputs
   inputCard: {
     borderWidth: 1,
     borderColor: '#E5E7EB',
@@ -257,7 +337,6 @@ const styles = StyleSheet.create({
     color: '#0D132B',
     padding: 0,
   },
-  // Primary button
   primaryBtn: {
     backgroundColor: '#6C4EF5',
     borderRadius: 16,
@@ -266,7 +345,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 4,
   },
-  // Divider
+  primaryBtnDisabled: {
+    opacity: 0.6,
+  },
+  errorText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 13,
+    color: '#EF4444',
+    textAlign: 'center',
+  },
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -277,7 +364,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E5E7EB',
   },
-  // Social buttons
   socialBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -300,7 +386,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // Footer
   footer: {
     flexDirection: 'row',
     alignItems: 'center',

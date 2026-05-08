@@ -1,3 +1,5 @@
+import { useSignIn, useSSO } from '@clerk/expo';
+import { type Href, router } from 'expo-router';
 import { useState } from 'react';
 import {
   Image,
@@ -11,19 +13,69 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { images } from '@/constants/images';
 import VerificationModal from '@/components/VerificationModal';
 
 export default function SignInScreen() {
+  const { signIn, fetchStatus } = useSignIn();
+  const { startSSOFlow } = useSSO();
+
   const [email, setEmail] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [verifyError, setVerifyError] = useState('');
 
-  const handleSignIn = () => {
+  const isLoading = fetchStatus === 'fetching';
+
+  const handleSignIn = async () => {
     if (!email) return;
+    setFormError('');
+
+    const { error } = await signIn.emailCode.sendCode({ emailAddress: email });
+    if (error) {
+      setFormError(error.message ?? 'Something went wrong');
+      return;
+    }
+
     setModalVisible(true);
+  };
+
+  const handleVerify = async (code: string) => {
+    setVerifyError('');
+
+    const { error } = await signIn.emailCode.verifyCode({ code });
+    if (error) {
+      setVerifyError(error.message ?? 'Invalid code. Try again.');
+      return;
+    }
+
+    if (signIn.status === 'complete') {
+      await signIn.finalize({
+        navigate: ({ session, decorateUrl }) => {
+          if (session?.currentTask) return;
+          const url = decorateUrl('/');
+          router.replace(url as Href);
+        },
+      });
+    }
+  };
+
+  const handleResend = async () => {
+    await signIn.emailCode.sendCode({ emailAddress: email });
+  };
+
+  const handleSSO = async (strategy: 'oauth_google' | 'oauth_apple' | 'oauth_facebook') => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy });
+      if (createdSessionId && setActive) {
+        await setActive({ session: createdSessionId });
+        router.replace('/');
+      }
+    } catch {
+      setFormError('Sign-in failed. Please try again.');
+    }
   };
 
   return (
@@ -44,7 +96,7 @@ export default function SignInScreen() {
 
           {/* Heading */}
           <View className="px-6 mt-2">
-            <Text className="font-poppins-bold text-[30px] text-text-primary leading-[38px]">
+            <Text className="font-poppins-bold text-[30px] text-text-primary leading-9.5">
               Welcome back!
             </Text>
             <Text className="font-poppins text-[15px] text-text-secondary mt-1">
@@ -84,14 +136,20 @@ export default function SignInScreen() {
 
             {/* Sign In button */}
             <TouchableOpacity
-              style={styles.primaryBtn}
+              style={[styles.primaryBtn, isLoading && styles.primaryBtnDisabled]}
               activeOpacity={0.85}
               onPress={handleSignIn}
+              disabled={isLoading}
             >
               <Text className="font-poppins-semibold text-[17px] text-white">
-                Sign In
+                {isLoading ? 'Sending code…' : 'Sign In'}
               </Text>
             </TouchableOpacity>
+
+            {/* Form error */}
+            {formError ? (
+              <Text style={styles.errorText}>{formError}</Text>
+            ) : null}
 
             {/* Divider */}
             <View style={styles.dividerRow}>
@@ -106,6 +164,7 @@ export default function SignInScreen() {
             <SocialButton
               icon={<Ionicons name="logo-google" size={22} color="#4285F4" />}
               label="Continue with Google"
+              onPress={() => handleSSO('oauth_google')}
             />
             <SocialButton
               icon={
@@ -114,17 +173,19 @@ export default function SignInScreen() {
                 </View>
               }
               label="Continue with Facebook"
+              onPress={() => handleSSO('oauth_facebook')}
             />
             <SocialButton
               icon={<Ionicons name="logo-apple" size={24} color="#000000" />}
               label="Continue with Apple"
+              onPress={() => handleSSO('oauth_apple')}
             />
           </View>
 
           {/* Footer */}
           <View style={styles.footer}>
             <Text className="font-poppins text-[14px] text-text-secondary">
-              Don't have an account?{' '}
+              {"Don't have an account?"}{' '}
             </Text>
             <TouchableOpacity onPress={() => router.push('/(auth)/sign-up')}>
               <Text className="font-poppins-semibold text-[14px] text-lingua-purple">
@@ -139,14 +200,25 @@ export default function SignInScreen() {
         visible={modalVisible}
         email={email}
         onClose={() => setModalVisible(false)}
+        onVerify={handleVerify}
+        onResend={handleResend}
+        error={verifyError}
       />
     </SafeAreaView>
   );
 }
 
-function SocialButton({ icon, label }: { icon: React.ReactNode; label: string }) {
+function SocialButton({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onPress: () => void;
+}) {
   return (
-    <TouchableOpacity style={styles.socialBtn} activeOpacity={0.8}>
+    <TouchableOpacity style={styles.socialBtn} activeOpacity={0.8} onPress={onPress}>
       <View style={styles.socialIconSlot}>{icon}</View>
       <Text className="font-poppins-medium text-[15px] text-text-primary flex-1 text-center">
         {label}
@@ -231,6 +303,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 4,
+  },
+  primaryBtnDisabled: {
+    opacity: 0.6,
+  },
+  errorText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 13,
+    color: '#EF4444',
+    textAlign: 'center',
   },
   dividerRow: {
     flexDirection: 'row',
