@@ -6,9 +6,11 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { images } from '@/constants/images';
 import { languages } from '@/data/languages';
+import { useLanguageStore } from '@/store/language-store';
 
 export default function LanguageSelectionScreen() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { selectedLanguageId: storedId, setSelectedLanguage } = useLanguageStore();
+  const [selectedId, setSelectedId] = useState<string | null>(storedId);
   const [search, setSearch] = useState('');
 
   const filtered = languages.filter(lang =>
@@ -93,7 +95,12 @@ export default function LanguageSelectionScreen() {
           style={[styles.confirmButton, !selectedId && styles.confirmButtonDisabled]}
           disabled={!selectedId}
           activeOpacity={0.85}
-          onPress={() => router.back()}
+          onPress={() => {
+            if (selectedId) {
+              setSelectedLanguage(selectedId);
+              router.replace('/');
+            }
+          }}
         >
           <Text className="font-poppins-semibold text-[16px] text-white">
             {selectedLanguage ? `Start Learning ${selectedLanguage.name}` : 'Select a Language'}

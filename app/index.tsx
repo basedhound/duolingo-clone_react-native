@@ -3,11 +3,14 @@ import { Redirect, router } from 'expo-router';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useLanguageStore } from '@/store/language-store';
+
 export default function HomeScreen() {
   const { isLoaded, isSignedIn } = useAuth();
   const { signOut } = useClerk();
+  const { selectedLanguageId, _hasHydrated, clearSelectedLanguage } = useLanguageStore();
 
-  if (!isLoaded) {
+  if (!isLoaded || !_hasHydrated) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.centered}>
@@ -19,6 +22,10 @@ export default function HomeScreen() {
 
   if (!isSignedIn) {
     return <Redirect href="/onboarding" />;
+  }
+
+  if (!selectedLanguageId) {
+    return <Redirect href="/language-selection" />;
   }
 
   return (
@@ -41,6 +48,14 @@ export default function HomeScreen() {
           onPress={() => signOut()}
         >
           <Text className="font-poppins-semibold text-[16px] text-text-secondary">Sign Out</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => clearSelectedLanguage()}
+        >
+          <Text className="font-poppins text-[13px] text-error mt-4">
+            Reset language (dev)
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
