@@ -1,5 +1,5 @@
 import { useAuth, useClerk } from '@clerk/expo';
-import { Redirect } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -31,9 +31,16 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.85}
+          onPress={() => router.push('/language-selection')}
+        >
+          <Text className="font-poppins-semibold text-[16px] text-white">Choose a Language</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonSecondary}
+          activeOpacity={0.85}
           onPress={() => signOut()}
         >
-          <Text className="font-poppins-semibold text-[16px] text-white">Sign Out</Text>
+          <Text className="font-poppins-semibold text-[16px] text-text-secondary">Sign Out</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -56,5 +63,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingVertical: 14,
     marginTop: 8,
+  },
+  buttonSecondary: {
+    borderRadius: 14,
+    paddingHorizontal: 32,
+    paddingVertical: 14,
   },
 });
