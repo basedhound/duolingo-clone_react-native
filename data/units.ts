@@ -9,7 +9,14 @@ export const units: Unit[] = [
     description: 'Learn to greet people and introduce yourself in Spanish',
     order: 1,
     icon: '👋',
-    lessonIds: ['es-lesson-1', 'es-lesson-2', 'es-lesson-3'],
+    lessonIds: [
+      'es-lesson-1',
+      'es-lesson-2',
+      'es-lesson-3',
+      'es-lesson-4',
+      'es-lesson-5',
+      'es-lesson-6',
+    ],
   },
 
   // ─── French ────────────────────────────────────────────────────────────────
@@ -20,7 +27,14 @@ export const units: Unit[] = [
     description: 'Learn to greet people and introduce yourself in French',
     order: 1,
     icon: '👋',
-    lessonIds: ['fr-lesson-1', 'fr-lesson-2', 'fr-lesson-3'],
+    lessonIds: [
+      'fr-lesson-1',
+      'fr-lesson-2',
+      'fr-lesson-3',
+      'fr-lesson-4',
+      'fr-lesson-5',
+      'fr-lesson-6',
+    ],
   },
 
   // ─── Japanese ──────────────────────────────────────────────────────────────
@@ -31,7 +45,14 @@ export const units: Unit[] = [
     description: 'Learn essential Japanese greetings and polite expressions',
     order: 1,
     icon: '👋',
-    lessonIds: ['ja-lesson-1', 'ja-lesson-2', 'ja-lesson-3'],
+    lessonIds: [
+      'ja-lesson-1',
+      'ja-lesson-2',
+      'ja-lesson-3',
+      'ja-lesson-4',
+      'ja-lesson-5',
+      'ja-lesson-6',
+    ],
   },
 
   // ─── German ────────────────────────────────────────────────────────────────
@@ -42,6 +63,13 @@ export const units: Unit[] = [
     description: 'Learn to greet people and introduce yourself in German',
     order: 1,
     icon: '👋',
-    lessonIds: ['de-lesson-1', 'de-lesson-2', 'de-lesson-3'],
+    lessonIds: [
+      'de-lesson-1',
+      'de-lesson-2',
+      'de-lesson-3',
+      'de-lesson-4',
+      'de-lesson-5',
+      'de-lesson-6',
+    ],
   },
 ];

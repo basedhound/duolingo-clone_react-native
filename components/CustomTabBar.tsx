@@ -2,7 +2,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect } from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -33,9 +33,9 @@ export function CustomTabBar({ state, navigation }: BottomTabBarProps) {
   );
 
   useEffect(() => {
-    circleX.value = withSpring(
+    circleX.value = withTiming(
       state.index * TAB_WIDTH + TAB_WIDTH / 2 - CIRCLE_SIZE / 2,
-      { damping: 16, stiffness: 160 }
+      { duration: 220, easing: Easing.out(Easing.cubic) }
     );
   }, [state.index, circleX]);
 

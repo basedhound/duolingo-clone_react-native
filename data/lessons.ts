@@ -816,4 +816,452 @@ export const lessons: Lesson[] = [
       ],
     },
   },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SPANISH — Lessons 4–6
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    id: 'es-lesson-4',
+    unitId: 'es-unit-1',
+    title: 'Travel & Directions',
+    description: 'Navigate airports, stations, and streets in Spanish',
+    type: 'vocabulary',
+    xpReward: 10,
+    durationMinutes: 6,
+    goals: [
+      'Ask for and understand directions',
+      'Name key travel locations',
+      'Use left, right, and straight ahead',
+    ],
+    activities: [
+      {
+        type: 'vocabulary',
+        instruction: 'Learn these essential travel words',
+        items: [
+          { word: 'el aeropuerto', translation: 'airport', pronunciation: '/el ae.ro.ˈpweɾ.to/', example: '¿Dónde está el aeropuerto?', exampleTranslation: 'Where is the airport?' },
+          { word: 'la estación', translation: 'station', pronunciation: '/la es.ta.ˈsjon/', example: 'La estación está cerca.', exampleTranslation: 'The station is nearby.' },
+          { word: 'el hotel', translation: 'hotel', pronunciation: '/el o.ˈtel/', example: 'Busco un hotel barato.', exampleTranslation: 'I am looking for a cheap hotel.' },
+          { word: 'a la derecha', translation: 'to the right', pronunciation: '/a la de.ˈɾe.tʃa/', example: 'Gira a la derecha.', exampleTranslation: 'Turn right.' },
+          { word: 'a la izquierda', translation: 'to the left', pronunciation: '/a la iz.ˈkjeɾ.da/', example: 'El banco está a la izquierda.', exampleTranslation: 'The bank is on the left.' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'Where is the station?',
+        targetPhrase: '¿Dónde está la estación?',
+        acceptedAnswers: ['¿Dónde está la estación?', 'Dónde está la estación', '¿Donde esta la estacion?'],
+        hint: 'Start with the question word for "where"',
+      },
+    ],
+  },
+
+  {
+    id: 'es-lesson-5',
+    unitId: 'es-unit-1',
+    title: 'Shopping & Markets',
+    description: 'Buy things and haggle at Spanish markets',
+    type: 'conversation',
+    xpReward: 15,
+    durationMinutes: 7,
+    goals: [
+      'Ask the price of something',
+      'Say you want to buy an item',
+      'Understand basic numbers for prices',
+    ],
+    activities: [
+      {
+        type: 'phrase_match',
+        instruction: 'Study these shopping phrases',
+        phrases: [
+          { phrase: '¿Cuánto cuesta esto?', translation: 'How much does this cost?', pronunciation: '/ˈkwan.to ˈkwes.ta ˈes.to/', context: 'Point at an item and use this phrase' },
+          { phrase: 'Quisiera comprar...', translation: 'I would like to buy...', pronunciation: '/ki.ˈsje.ɾa kom.ˈpɾaɾ/', context: 'Polite way to say you want to purchase something' },
+          { phrase: 'Es muy caro.', translation: 'It is very expensive.', pronunciation: '/es muj ˈka.ɾo/', context: 'Use when you think the price is too high' },
+          { phrase: '¿Tiene usted...?', translation: 'Do you have...?', pronunciation: '/ˈtje.ne us.ˈted/', context: 'Ask a shop assistant if they stock an item' },
+          { phrase: 'Me lo llevo.', translation: "I'll take it.", pronunciation: '/me lo ˈʝe.βo/', context: 'Say this when you decide to buy the item' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'How much does this cost?',
+        targetPhrase: '¿Cuánto cuesta esto?',
+        acceptedAnswers: ['¿Cuánto cuesta esto?', 'Cuánto cuesta esto', '¿Cuanto cuesta esto?'],
+        hint: 'Start with the question word for "how much"',
+      },
+    ],
+  },
+
+  {
+    id: 'es-lesson-6',
+    unitId: 'es-unit-1',
+    title: 'Family & Friends',
+    description: 'Talk about the people closest to you in Spanish',
+    type: 'vocabulary',
+    xpReward: 10,
+    durationMinutes: 5,
+    goals: [
+      'Name family members in Spanish',
+      'Describe your family',
+      'Talk about friends',
+    ],
+    activities: [
+      {
+        type: 'vocabulary',
+        instruction: 'Learn these family words',
+        items: [
+          { word: 'la madre', translation: 'mother', pronunciation: '/la ˈma.ðɾe/', example: 'Mi madre es muy amable.', exampleTranslation: 'My mother is very kind.' },
+          { word: 'el padre', translation: 'father', pronunciation: '/el ˈpa.ðɾe/', example: 'Mi padre trabaja mucho.', exampleTranslation: 'My father works a lot.' },
+          { word: 'la hermana', translation: 'sister', pronunciation: '/la eɾ.ˈma.na/', example: 'Tengo una hermana mayor.', exampleTranslation: 'I have an older sister.' },
+          { word: 'el hermano', translation: 'brother', pronunciation: '/el eɾ.ˈma.no/', example: 'Mi hermano vive en Madrid.', exampleTranslation: 'My brother lives in Madrid.' },
+          { word: 'el amigo', translation: 'friend', pronunciation: '/el a.ˈmi.ɣo/', example: 'Ella es mi mejor amiga.', exampleTranslation: 'She is my best friend.' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'My mother is very kind.',
+        targetPhrase: 'Mi madre es muy amable.',
+        acceptedAnswers: ['Mi madre es muy amable.', 'Mi madre es muy amable', 'mi madre es muy amable'],
+        hint: 'Think about the possessive "my" in Spanish',
+      },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FRENCH — Lessons 4–6
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    id: 'fr-lesson-4',
+    unitId: 'fr-unit-1',
+    title: 'Travel & Directions',
+    description: 'Navigate airports, stations, and streets in French',
+    type: 'vocabulary',
+    xpReward: 10,
+    durationMinutes: 6,
+    goals: [
+      'Ask for and understand directions',
+      'Name key travel locations',
+      'Use left, right, and straight ahead',
+    ],
+    activities: [
+      {
+        type: 'vocabulary',
+        instruction: 'Learn these essential travel words',
+        items: [
+          { word: "l'aéroport", translation: 'airport', pronunciation: '/le.ʁo.pɔʁ/', example: "Où est l'aéroport?", exampleTranslation: 'Where is the airport?' },
+          { word: 'la gare', translation: 'train station', pronunciation: '/la ɡaʁ/', example: 'La gare est par là.', exampleTranslation: 'The station is over there.' },
+          { word: "l'hôtel", translation: 'hotel', pronunciation: '/lo.tɛl/', example: "Je cherche un hôtel.", exampleTranslation: 'I am looking for a hotel.' },
+          { word: 'à droite', translation: 'to the right', pronunciation: '/a dʁwat/', example: 'Tournez à droite.', exampleTranslation: 'Turn right.' },
+          { word: 'à gauche', translation: 'to the left', pronunciation: '/a ɡoʃ/', example: 'La banque est à gauche.', exampleTranslation: 'The bank is on the left.' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'Where is the station?',
+        targetPhrase: 'Où est la gare?',
+        acceptedAnswers: ['Où est la gare?', 'Ou est la gare', 'où est la gare?'],
+        hint: 'Start with the question word for "where"',
+      },
+    ],
+  },
+
+  {
+    id: 'fr-lesson-5',
+    unitId: 'fr-unit-1',
+    title: 'Shopping & Markets',
+    description: 'Buy things and browse French markets with confidence',
+    type: 'conversation',
+    xpReward: 15,
+    durationMinutes: 7,
+    goals: [
+      'Ask the price of something',
+      'Express a wish to buy something',
+      'React to prices',
+    ],
+    activities: [
+      {
+        type: 'phrase_match',
+        instruction: 'Study these shopping phrases',
+        phrases: [
+          { phrase: 'Combien ça coûte?', translation: 'How much does this cost?', pronunciation: '/kɔ̃.bjɛ̃ sa kut/', context: 'Ask the price of any item' },
+          { phrase: 'Je voudrais acheter...', translation: 'I would like to buy...', pronunciation: '/ʒə vu.dʁɛ aʃ.te/', context: 'Polite way to express what you want to purchase' },
+          { phrase: "C'est trop cher.", translation: 'It is too expensive.', pronunciation: '/sɛ tʁo ʃɛʁ/', context: 'Use when the price is higher than expected' },
+          { phrase: 'Avez-vous...?', translation: 'Do you have...?', pronunciation: '/a.ve vu/', context: 'Ask a shopkeeper if they carry a product' },
+          { phrase: "Je le prends.", translation: "I'll take it.", pronunciation: '/ʒə lə pʁɑ̃/', context: 'Confirm your purchase' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'How much does this cost?',
+        targetPhrase: 'Combien ça coûte?',
+        acceptedAnswers: ['Combien ça coûte?', 'Combien ca coute', 'combien ça coûte?'],
+        hint: 'The first word means "how much"',
+      },
+    ],
+  },
+
+  {
+    id: 'fr-lesson-6',
+    unitId: 'fr-unit-1',
+    title: 'Family & Friends',
+    description: 'Talk about the people closest to you in French',
+    type: 'vocabulary',
+    xpReward: 10,
+    durationMinutes: 5,
+    goals: [
+      'Name family members in French',
+      'Describe your family',
+      'Talk about friends',
+    ],
+    activities: [
+      {
+        type: 'vocabulary',
+        instruction: 'Learn these family words',
+        items: [
+          { word: 'la mère', translation: 'mother', pronunciation: '/la mɛʁ/', example: 'Ma mère est très gentille.', exampleTranslation: 'My mother is very kind.' },
+          { word: 'le père', translation: 'father', pronunciation: '/lə pɛʁ/', example: 'Mon père travaille beaucoup.', exampleTranslation: 'My father works a lot.' },
+          { word: 'la sœur', translation: 'sister', pronunciation: '/la sœʁ/', example: "J'ai une grande sœur.", exampleTranslation: 'I have an older sister.' },
+          { word: 'le frère', translation: 'brother', pronunciation: '/lə fʁɛʁ/', example: 'Mon frère habite à Paris.', exampleTranslation: 'My brother lives in Paris.' },
+          { word: "l'ami(e)", translation: 'friend', pronunciation: '/la.mi/', example: "C'est ma meilleure amie.", exampleTranslation: 'She is my best friend.' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'My mother is very kind.',
+        targetPhrase: 'Ma mère est très gentille.',
+        acceptedAnswers: ['Ma mère est très gentille.', 'Ma mere est tres gentille', 'ma mère est très gentille.'],
+        hint: 'Think about how "my" changes for feminine nouns in French',
+      },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // JAPANESE — Lessons 4–6
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    id: 'ja-lesson-4',
+    unitId: 'ja-unit-1',
+    title: 'Travel & Directions',
+    description: 'Find your way around Japanese cities and stations',
+    type: 'vocabulary',
+    xpReward: 10,
+    durationMinutes: 6,
+    goals: [
+      'Ask for and follow directions in Japanese',
+      'Name key transport locations',
+      'Understand left, right, and straight',
+    ],
+    activities: [
+      {
+        type: 'vocabulary',
+        instruction: 'Learn these essential travel words',
+        items: [
+          { word: '空港', translation: 'airport', pronunciation: 'Kūkō /kuː.koː/', example: '空港はどこですか？', exampleTranslation: 'Where is the airport?' },
+          { word: '駅', translation: 'train station', pronunciation: 'Eki /e.ki/', example: '駅はここから近いです。', exampleTranslation: 'The station is close from here.' },
+          { word: 'ホテル', translation: 'hotel', pronunciation: 'Hoteru /ho.te.ru/', example: 'ホテルを探しています。', exampleTranslation: 'I am looking for a hotel.' },
+          { word: '右', translation: 'right', pronunciation: 'Migi /mi.gi/', example: '右に曲がってください。', exampleTranslation: 'Please turn right.' },
+          { word: '左', translation: 'left', pronunciation: 'Hidari /hi.da.ri/', example: '左側にあります。', exampleTranslation: 'It is on the left side.' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'Where is the station?',
+        targetPhrase: '駅はどこですか？',
+        acceptedAnswers: ['駅はどこですか？', '駅はどこですか', 'Eki wa doko desu ka'],
+        hint: 'Start with the place, then "wa doko desu ka"',
+      },
+    ],
+  },
+
+  {
+    id: 'ja-lesson-5',
+    unitId: 'ja-unit-1',
+    title: 'Shopping & Markets',
+    description: 'Shop confidently in Japanese stores and markets',
+    type: 'conversation',
+    xpReward: 15,
+    durationMinutes: 7,
+    goals: [
+      'Ask the price of something',
+      'Express a wish to buy an item',
+      'React to prices politely',
+    ],
+    activities: [
+      {
+        type: 'phrase_match',
+        instruction: 'Study these shopping phrases',
+        phrases: [
+          { phrase: 'いくらですか？', translation: 'How much is it?', pronunciation: 'Ikura desu ka? /i.ku.ra de.su ka/', context: 'Ask the price of any item in a shop' },
+          { phrase: 'これをください。', translation: 'I will take this, please.', pronunciation: 'Kore wo kudasai. /ko.re wo ku.da.sa.i/', context: 'Politely say you want to buy the item you are holding' },
+          { phrase: '高いですね。', translation: 'That is expensive, isn\'t it.', pronunciation: 'Takai desu ne. /ta.ka.i de.su ne/', context: 'A soft way to react to a high price' },
+          { phrase: 'ありますか？', translation: 'Do you have...?', pronunciation: 'Arimasu ka? /a.ri.ma.su ka/', context: 'Ask a shop assistant if they have a product' },
+          { phrase: '袋をもらえますか？', translation: 'Can I have a bag?', pronunciation: 'Fukuro wo moraemasu ka?', context: 'Ask for a shopping bag at checkout' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'How much is it?',
+        targetPhrase: 'いくらですか？',
+        acceptedAnswers: ['いくらですか？', 'いくらですか', 'Ikura desu ka', 'ikura desu ka?'],
+        hint: 'The first word means "how much"',
+      },
+    ],
+  },
+
+  {
+    id: 'ja-lesson-6',
+    unitId: 'ja-unit-1',
+    title: 'Family & Friends',
+    description: 'Talk about family and relationships in Japanese',
+    type: 'vocabulary',
+    xpReward: 10,
+    durationMinutes: 5,
+    goals: [
+      'Name family members in Japanese',
+      'Describe your own family',
+      'Refer to other people\'s families politely',
+    ],
+    activities: [
+      {
+        type: 'vocabulary',
+        instruction: 'Learn these family words',
+        items: [
+          { word: '母', translation: 'mother (my own)', pronunciation: 'Haha /ha.ha/', example: '母はやさしいです。', exampleTranslation: 'My mother is kind.' },
+          { word: '父', translation: 'father (my own)', pronunciation: 'Chichi /tɕi.tɕi/', example: '父は会社員です。', exampleTranslation: 'My father is a company employee.' },
+          { word: '姉', translation: 'older sister', pronunciation: 'Ane /a.ne/', example: '姉は東京に住んでいます。', exampleTranslation: 'My older sister lives in Tokyo.' },
+          { word: '兄', translation: 'older brother', pronunciation: 'Ani /a.ni/', example: '兄はとても背が高いです。', exampleTranslation: 'My older brother is very tall.' },
+          { word: '友達', translation: 'friend', pronunciation: 'Tomodachi /to.mo.da.chi/', example: '友達と映画を見ました。', exampleTranslation: 'I watched a movie with my friend.' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'My mother is kind.',
+        targetPhrase: '母はやさしいです。',
+        acceptedAnswers: ['母はやさしいです。', '母はやさしいです', 'Haha wa yasashii desu'],
+        hint: 'Use the word for "my mother" in the humble form',
+      },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GERMAN — Lessons 4–6
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  {
+    id: 'de-lesson-4',
+    unitId: 'de-unit-1',
+    title: 'Travel & Directions',
+    description: 'Navigate airports, stations, and streets in German',
+    type: 'vocabulary',
+    xpReward: 10,
+    durationMinutes: 6,
+    goals: [
+      'Ask for and understand directions',
+      'Name key travel locations',
+      'Use left, right, and straight ahead',
+    ],
+    activities: [
+      {
+        type: 'vocabulary',
+        instruction: 'Learn these essential travel words',
+        items: [
+          { word: 'der Flughafen', translation: 'airport', pronunciation: '/deːɐ̯ ˈfluːk.haː.fən/', example: 'Wo ist der Flughafen?', exampleTranslation: 'Where is the airport?' },
+          { word: 'der Bahnhof', translation: 'train station', pronunciation: '/deːɐ̯ ˈbaːn.hoːf/', example: 'Der Bahnhof ist in der Nähe.', exampleTranslation: 'The train station is nearby.' },
+          { word: 'das Hotel', translation: 'hotel', pronunciation: '/das ho.ˈtɛl/', example: 'Ich suche ein Hotel.', exampleTranslation: 'I am looking for a hotel.' },
+          { word: 'rechts', translation: 'to the right', pronunciation: '/ʁɛçts/', example: 'Biegen Sie rechts ab.', exampleTranslation: 'Turn right.' },
+          { word: 'links', translation: 'to the left', pronunciation: '/lɪŋks/', example: 'Die Bank ist links.', exampleTranslation: 'The bank is on the left.' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'Where is the train station?',
+        targetPhrase: 'Wo ist der Bahnhof?',
+        acceptedAnswers: ['Wo ist der Bahnhof?', 'Wo ist der Bahnhof', 'wo ist der bahnhof?'],
+        hint: 'Start with the question word for "where"',
+      },
+    ],
+  },
+
+  {
+    id: 'de-lesson-5',
+    unitId: 'de-unit-1',
+    title: 'Shopping & Markets',
+    description: 'Buy things and browse German markets with confidence',
+    type: 'conversation',
+    xpReward: 15,
+    durationMinutes: 7,
+    goals: [
+      'Ask the price of something',
+      'Express a wish to buy something',
+      'React to prices in German',
+    ],
+    activities: [
+      {
+        type: 'phrase_match',
+        instruction: 'Study these shopping phrases',
+        phrases: [
+          { phrase: 'Was kostet das?', translation: 'How much does this cost?', pronunciation: '/vas ˈkɔs.tət das/', context: 'Ask the price of any item' },
+          { phrase: 'Ich möchte... kaufen.', translation: 'I would like to buy...', pronunciation: '/ɪç ˈmœç.tə ˈkau.fən/', context: 'Polite way to express what you want to buy' },
+          { phrase: 'Das ist zu teuer.', translation: 'That is too expensive.', pronunciation: '/das ɪst tsuː ˈtɔɪ.ɐ/', context: 'Use when the price is too high' },
+          { phrase: 'Haben Sie...?', translation: 'Do you have...?', pronunciation: '/ˈhaː.bən ziː/', context: 'Ask a shop assistant if they stock a product' },
+          { phrase: 'Ich nehme es.', translation: "I'll take it.", pronunciation: '/ɪç ˈneː.mə ɛs/', context: 'Confirm your purchase decision' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'How much does this cost?',
+        targetPhrase: 'Was kostet das?',
+        acceptedAnswers: ['Was kostet das?', 'Was kostet das', 'was kostet das?'],
+        hint: 'The first word means "what"',
+      },
+    ],
+  },
+
+  {
+    id: 'de-lesson-6',
+    unitId: 'de-unit-1',
+    title: 'Family & Friends',
+    description: 'Talk about the people closest to you in German',
+    type: 'vocabulary',
+    xpReward: 10,
+    durationMinutes: 5,
+    goals: [
+      'Name family members in German',
+      'Describe your family',
+      'Talk about friends',
+    ],
+    activities: [
+      {
+        type: 'vocabulary',
+        instruction: 'Learn these family words',
+        items: [
+          { word: 'die Mutter', translation: 'mother', pronunciation: '/diː ˈmʊ.tɐ/', example: 'Meine Mutter ist sehr nett.', exampleTranslation: 'My mother is very nice.' },
+          { word: 'der Vater', translation: 'father', pronunciation: '/deːɐ̯ ˈfaː.tɐ/', example: 'Mein Vater arbeitet viel.', exampleTranslation: 'My father works a lot.' },
+          { word: 'die Schwester', translation: 'sister', pronunciation: '/diː ˈʃvɛs.tɐ/', example: 'Ich habe eine ältere Schwester.', exampleTranslation: 'I have an older sister.' },
+          { word: 'der Bruder', translation: 'brother', pronunciation: '/deːɐ̯ ˈbʁuː.dɐ/', example: 'Mein Bruder wohnt in Berlin.', exampleTranslation: 'My brother lives in Berlin.' },
+          { word: 'der Freund / die Freundin', translation: 'friend', pronunciation: '/deːɐ̯ fʁɔɪnt/', example: 'Sie ist meine beste Freundin.', exampleTranslation: 'She is my best friend.' },
+        ],
+      },
+      {
+        type: 'translation',
+        instruction: 'Translate the following phrase',
+        prompt: 'My mother is very nice.',
+        targetPhrase: 'Meine Mutter ist sehr nett.',
+        acceptedAnswers: ['Meine Mutter ist sehr nett.', 'Meine Mutter ist sehr nett', 'meine mutter ist sehr nett.'],
+        hint: 'Remember the possessive "my" is "meine" for feminine nouns',
+      },
+    ],
+  },
 ];
