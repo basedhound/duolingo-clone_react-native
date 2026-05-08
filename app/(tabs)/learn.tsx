@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Href, router } from 'expo-router';
 import { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -163,7 +164,7 @@ export default function LearnScreen() {
                 key={lesson.id}
                 lesson={lesson}
                 index={i}
-                onPress={() => {}}
+                onPress={() => router.push(`/lesson/${lesson.id}` as Href)}
               />
             ))
           ) : (
