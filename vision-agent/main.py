@@ -4,10 +4,9 @@ AI Language Teacher — voice-only agent.
 Transport : Stream Edge (getstream plugin)
 LLM       : OpenAI Realtime (speech-to-speech, no separate STT/TTS needed)
 
-The teacher always speaks English and teaches the language selected by the
-TEACH_LANGUAGE env var (default: Spanish).  In HTTP-server mode the mobile
-app encodes the target language in the call_id as "<language>:<uuid>" so
-each call gets the right teacher automatically.
+The teacher always speaks English and teaches the language set in the Stream
+call's custom data (packed by the Expo API route from the lesson record).
+Falls back to the TEACH_LANGUAGE env var if custom data is absent.
 """
 
 import os
@@ -20,9 +19,12 @@ from vision_agents.plugins import getstream, openai
 load_dotenv()
 
 TEACH_LANGUAGE = os.getenv("TEACH_LANGUAGE", "Spanish")
+AGENT_USER_ID = "language-teacher"
 
 
-def _build_instructions(language: str) -> str:
+# ── Instruction builders ───────────────────────────────────────────────────────
+
+def _default_instructions(language: str) -> str:
     return (
         f"You are an enthusiastic AI language teacher. "
         f"You always speak English and you are teaching the user {language} through English. "
@@ -34,14 +36,61 @@ def _build_instructions(language: str) -> str:
     )
 
 
-def _language_from_call_id(call_id: str) -> str:
-    """Extract language from call_id formatted as '<language>:<uuid>', else use env default."""
-    if ":" in call_id:
-        candidate = call_id.split(":")[0].strip().capitalize()
-        if candidate:
-            return candidate
-    return TEACH_LANGUAGE
+def _instructions_from_custom(custom: dict) -> str:
+    """Build a rich instruction string from the lesson custom data packed by the Expo API route."""
+    ai_teacher = custom.get("aiTeacher") or {}
+    language_name = custom.get("languageName") or TEACH_LANGUAGE
 
+    system_prompt: str = ai_teacher.get("systemPrompt") or ""
+    lesson_context: str = ai_teacher.get("lessonContext") or ""
+    topics: list = ai_teacher.get("topicsToCover") or []
+    goals: list = custom.get("goals") or []
+    vocabulary: list = custom.get("vocabulary") or []
+    phrases: list = custom.get("phrases") or []
+
+    parts: list[str] = []
+
+    if system_prompt:
+        parts.append(system_prompt)
+    else:
+        parts.append(_default_instructions(language_name))
+
+    if lesson_context:
+        parts.append(f"LESSON CONTEXT: {lesson_context}")
+
+    if topics:
+        parts.append("TOPICS TO COVER:\n" + "\n".join(f"- {t}" for t in topics))
+
+    if goals:
+        parts.append("LESSON GOALS:\n" + "\n".join(f"- {g}" for g in goals))
+
+    if vocabulary:
+        vocab_str = ", ".join(
+            f"{v['word']} = {v['translation']}"
+            for v in vocabulary[:12]
+            if isinstance(v, dict) and v.get("word") and v.get("translation")
+        )
+        if vocab_str:
+            parts.append(f"KEY VOCABULARY: {vocab_str}")
+
+    if phrases:
+        phrase_str = "; ".join(
+            f"{p['phrase']} ({p['translation']})"
+            for p in phrases[:8]
+            if isinstance(p, dict) and p.get("phrase") and p.get("translation")
+        )
+        if phrase_str:
+            parts.append(f"KEY PHRASES: {phrase_str}")
+
+    parts.append(
+        "Keep replies short — under three sentences. "
+        "Do not use markdown, bullet points, or special characters."
+    )
+
+    return "\n\n".join(parts)
+
+
+# ── Agent factory & join logic ─────────────────────────────────────────────────
 
 async def create_agent(**kwargs) -> Agent:
     return Agent(
@@ -51,16 +100,29 @@ async def create_agent(**kwargs) -> Agent:
             voice="marin",
             send_video=False,
         ),
-        agent_user=User(name="Teacher", id="language-teacher"),
-        instructions=_build_instructions(TEACH_LANGUAGE),
+        agent_user=User(name="AI Teacher", id=AGENT_USER_ID),
+        instructions=_default_instructions(TEACH_LANGUAGE),
     )
 
 
 async def join_call(agent: Agent, call_type: str, call_id: str) -> None:
-    language = _language_from_call_id(call_id)
-    agent.llm.set_instructions(_build_instructions(language))
-
+    # get_or_create fetches the existing call created by the Expo API route
     call = await agent.create_call(call_type, call_id)
+
+    # Read the lesson context packed into the call's custom data
+    try:
+        response = await call.get()
+        custom: dict = (
+            (response.data.call.custom or {})
+            if response.data and response.data.call
+            else {}
+        )
+    except Exception:
+        custom = {}
+
+    instructions = _instructions_from_custom(custom)
+    agent.llm.set_instructions(instructions)
+
     async with agent.join(call):
         await agent.finish()
 

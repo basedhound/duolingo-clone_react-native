@@ -32,6 +32,7 @@ import type { Language, Lesson } from '@/types/learning';
 // ─────────────────────────────────────────────
 
 type CallPhase = 'loading' | 'connecting' | 'joined' | 'error';
+type AgentStatus = 'idle' | 'connecting' | 'connected' | 'failed';
 
 // ─────────────────────────────────────────────
 // Language phrases
@@ -43,6 +44,29 @@ const LANG_PHRASE: Record<string, string> = {
   ja: 'とても良かったです！Great job! 👋',
   de: 'Sehr gut! Das war super! 👋',
 };
+
+// ─────────────────────────────────────────────
+// Status helpers
+// ─────────────────────────────────────────────
+
+function resolveStatus(
+  phase: CallPhase,
+  agentStatus: AgentStatus,
+): { label: string; color: string; spinner: boolean } {
+  if (phase === 'connecting') {
+    return { label: 'Connecting...', color: '#F59E0B', spinner: true };
+  }
+  switch (agentStatus) {
+    case 'idle':
+      return { label: 'Setting up teacher...', color: '#F59E0B', spinner: true };
+    case 'connecting':
+      return { label: 'Teacher joining...', color: '#F59E0B', spinner: true };
+    case 'connected':
+      return { label: 'Teacher Online', color: '#21C16B', spinner: false };
+    case 'failed':
+      return { label: 'Teacher unavailable', color: '#F59E0B', spinner: false };
+  }
+}
 
 // ─────────────────────────────────────────────
 // Shared sub-components
@@ -116,6 +140,7 @@ interface AudioCallContentProps {
   lesson: Lesson | undefined;
   language: Language | undefined;
   phase: CallPhase;
+  agentStatus: AgentStatus;
   userImageUrl: string | undefined;
   userName: string;
   onEndCall: () => void;
@@ -125,6 +150,7 @@ function AudioCallContent({
   lesson,
   language,
   phase,
+  agentStatus,
   userImageUrl,
   userName,
   onEndCall,
@@ -137,11 +163,10 @@ function AudioCallContent({
   const teacherPhrase =
     LANG_PHRASE[language?.id ?? ''] ?? '¡Muy bien! That was great! 👋';
 
-  const isConnecting = phase === 'connecting';
-  const statusLabel = isConnecting ? 'Connecting...' : 'Online';
-  const statusColor = isConnecting ? '#F59E0B' : '#21C16B';
+  const { label: statusLabel, color: statusColor, spinner: showSpinner } =
+    resolveStatus(phase, agentStatus);
 
-  // Use optimistic value for snappier UI feedback
+  const isConnecting = phase === 'connecting';
   const isMuted = optimisticIsMute;
 
   return (
@@ -162,7 +187,7 @@ function AudioCallContent({
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>AI Teacher</Text>
             <View style={styles.onlineRow}>
-              {isConnecting ? (
+              {showSpinner ? (
                 <ActivityIndicator
                   size="small"
                   color={statusColor}
@@ -241,7 +266,7 @@ function AudioCallContent({
           </View>
 
           {/* Speech bubble */}
-          {subtitlesVisible && (
+          {subtitlesVisible && agentStatus === 'connected' && (
             <View style={styles.bubbleWrapper}>
               <View style={styles.bubble}>
                 <View style={{ flex: 1 }}>
@@ -255,11 +280,19 @@ function AudioCallContent({
             </View>
           )}
 
-          {/* Connecting overlay on teacher area */}
+          {/* Overlay while Stream is connecting */}
           {isConnecting && (
             <View style={styles.connectingOverlay}>
               <ActivityIndicator size="large" color="#fff" />
               <Text style={styles.connectingOverlayText}>Joining lesson...</Text>
+            </View>
+          )}
+
+          {/* Overlay while agent is joining (after Stream is ready) */}
+          {!isConnecting && (agentStatus === 'idle' || agentStatus === 'connecting') && (
+            <View style={styles.connectingOverlay}>
+              <ActivityIndicator size="large" color="#fff" />
+              <Text style={styles.connectingOverlayText}>Teacher is joining...</Text>
             </View>
           )}
         </View>
@@ -353,24 +386,43 @@ export default function LessonScreen() {
   const language = languages.find((l) => l.id === unit?.languageId);
 
   const [phase, setPhase] = useState<CallPhase>('loading');
+  const [agentStatus, setAgentStatus] = useState<AgentStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [streamClient, setStreamClient] = useState<StreamVideoClient | null>(null);
   const [streamCall, setStreamCall] = useState<Call | null>(null);
 
   const callRef = useRef<Call | null>(null);
   const clientRef = useRef<StreamVideoClient | null>(null);
+  const callIdRef = useRef<string | null>(null);
+  const agentSessionRef = useRef<string | null>(null);
 
-  // ── Lifecycle cleanup on unmount ──
+  // ── Stop agent helper (fire-and-forget) ──────
+  function stopAgent() {
+    const sessionId = agentSessionRef.current;
+    const cid = callIdRef.current;
+    if (!sessionId || !cid) return;
+    agentSessionRef.current = null;
+    fetch(
+      getStreamApiUrl(
+        `/api/stream/agent-session?callId=${encodeURIComponent(cid)}&sessionId=${encodeURIComponent(sessionId)}`,
+      ),
+      { method: 'DELETE' },
+    ).catch(() => {});
+  }
+
+  // ── Unmount cleanup ───────────────────────────
   useEffect(() => {
     return () => {
+      stopAgent();
       callRef.current?.leave().catch(() => {});
       clientRef.current?.disconnectUser().catch(() => {});
       callRef.current = null;
       clientRef.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Stream setup ──────────────────
+  // ── Stream setup ──────────────────────────────
   useEffect(() => {
     if (!user?.id || !id) return;
 
@@ -402,6 +454,8 @@ export default function LessonScreen() {
 
         if (!active) return;
 
+        callIdRef.current = callId;
+
         // 2. Create Stream client with the Clerk user's identity
         const client = createStreamVideoClient(
           user!.id,
@@ -411,8 +465,8 @@ export default function LessonScreen() {
         );
         clientRef.current = client;
 
-        // 3. Reference the call
-        const call = client.call('default', callId);
+        // 3. Reference the audio_room call
+        const call = client.call('audio_room', callId);
         callRef.current = call;
 
         setStreamClient(client);
@@ -441,7 +495,42 @@ export default function LessonScreen() {
     };
   }, [user?.id, user, id, unit?.languageId]);
 
+  // ── Start agent once the user has joined the call ──
+  useEffect(() => {
+    if (phase !== 'joined') return;
+    const callId = callIdRef.current;
+    if (!callId) return;
+
+    let cancelled = false;
+    setAgentStatus('connecting');
+
+    fetch(getStreamApiUrl('/api/stream/agent-session'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ callId, callType: 'audio_room' }),
+    })
+      .then((r) => r.json())
+      .then((data: { sessionId?: string }) => {
+        if (cancelled) return;
+        if (data.sessionId) {
+          agentSessionRef.current = data.sessionId;
+          setAgentStatus('connected');
+        } else {
+          setAgentStatus('failed');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setAgentStatus('failed');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [phase]);
+
+  // ── End call ──────────────────────────────────
   function handleEndCall() {
+    stopAgent();
     callRef.current?.leave().catch(() => {});
     router.back();
   }
@@ -449,7 +538,7 @@ export default function LessonScreen() {
   const userDisplayName =
     user?.fullName ?? user?.primaryEmailAddress?.emailAddress ?? 'Learner';
 
-  // ── Loading state ─────────────────
+  // ── Loading state ─────────────────────────────
   if (phase === 'loading' || !streamClient || !streamCall) {
     return (
       <View style={styles.root}>
@@ -488,7 +577,7 @@ export default function LessonScreen() {
     );
   }
 
-  // ── Error state ───────────────────
+  // ── Error state ───────────────────────────────
   if (phase === 'error') {
     return (
       <View style={styles.root}>
@@ -522,7 +611,7 @@ export default function LessonScreen() {
     );
   }
 
-  // ── Connected ─────────────────────
+  // ── Connected ─────────────────────────────────
   return (
     <StreamVideo client={streamClient}>
       <StreamCall call={streamCall}>
@@ -530,6 +619,7 @@ export default function LessonScreen() {
           lesson={lesson}
           language={language}
           phase={phase}
+          agentStatus={agentStatus}
           userImageUrl={user?.imageUrl ?? undefined}
           userName={userDisplayName}
           onEndCall={handleEndCall}
